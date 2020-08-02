@@ -1,11 +1,12 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import models.User
 import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import repository.UserRepository
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserController @Inject()(cc: ControllerComponents, userRepository: UserRepository)(implicit ex: ExecutionContext)
@@ -23,5 +24,17 @@ class UserController @Inject()(cc: ControllerComponents, userRepository: UserRep
     request =>
       userRepository.getAll
         .map(users => Ok(Json.toJson(users)))
+  }
+
+
+  def addUser = Action.async {
+    request =>
+      request.body.asJson match {
+        case Some(jsonBody) =>
+          val user = User(id = -1, name = (jsonBody \ "name").as[String], age = (jsonBody \ "age").as[Int], hobby = (jsonBody \ "hobby").asOpt[String])
+          userRepository.addUser(user)
+            .map(user => Ok(Json.toJson(user)))
+        case None => Future.successful(BadRequest(Json.toJson("request body missing")))
+      }
   }
 }

@@ -30,4 +30,12 @@ class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
     }
     ctx.run(q).map(user => user)
   }
+
+  def addUser(u : User) = {
+    val q = quote {
+      users.insert(lift(u)).returning(_.id)
+    }
+
+    ctx.run(q).map(id => u.copy(id = id))
+  }
 }
