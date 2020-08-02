@@ -17,6 +17,8 @@ class UserController @Inject()(cc: ControllerComponents, userRepository: UserRep
         .map(user => Ok(Json.toJson(user)))
   }
 
+  def getById(id: String) = getById(id.toLong)
+
   def getAll = Action.async {
     request =>
       userRepository.getAll
