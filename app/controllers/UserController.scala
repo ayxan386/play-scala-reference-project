@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
-import play.api.mvc.{AbstractController, ControllerComponents}
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import repository.UserRepository
 
 import scala.concurrent.ExecutionContext
@@ -17,7 +17,7 @@ class UserController @Inject()(cc: ControllerComponents, userRepository: UserRep
         .map(user => Ok(Json.toJson(user)))
   }
 
-  def getById(id: String) = getById(id.toLong)
+  def getById(id: String): Action[AnyContent] = getById(id.toLong)
 
   def getAll = Action.async {
     request =>
