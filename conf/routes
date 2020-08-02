@@ -9,7 +9,7 @@ GET        /api/v1/users            controllers.UserController.getById(id: Long)
 
 GET        /api/v1/users/all        controllers.UserController.getAll
 
-POST        /api/v1/users/add
+POST        /api/v1/users/add       controllers.UserController.addUser
 
 
 # Map static resources from the /public folder to the /assets URL path

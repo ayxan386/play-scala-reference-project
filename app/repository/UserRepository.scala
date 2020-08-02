@@ -33,7 +33,7 @@ class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
 
   def addUser(u : User) = {
     val q = quote {
-      users.insert(lift(u)).returning(_.id)
+      users.insert(lift(u)).returningGenerated(_.id)
     }
 
     ctx.run(q).map(id => u.copy(id = id))
