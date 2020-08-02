@@ -8,12 +8,18 @@ import repository.UserRepository
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class UserController @Inject() (cc: ControllerComponents, userRepository: UserRepository)(implicit ex : ExecutionContext)
-extends AbstractController(cc){
+class UserController @Inject()(cc: ControllerComponents, userRepository: UserRepository)(implicit ex: ExecutionContext)
+  extends AbstractController(cc) {
 
   def getById(id: Long) = Action.async {
     request =>
       userRepository.getById(id)
-        .map(Ok(Json.toJson(_)))
+        .map(user => Ok(Json.toJson(user)))
+  }
+
+  def getAll = Action.async {
+    request =>
+      userRepository.getAll
+        .map(users => Ok(Json.toJson(users)))
   }
 }
