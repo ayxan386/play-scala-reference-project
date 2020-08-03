@@ -18,9 +18,9 @@ class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
 
   private val usersJoinRole = quote {
     for {
-      user <- querySchema[User]("users")
-      role <- querySchema[UserRole]("user-role") if (user.roleId == role.id)
-    } yield (user, role)
+      u <- querySchema[User]("users")
+      r <- querySchema[UserRole]("user_role").join(u.roleId == _.id)
+    } yield (u, r)
   }
 
   private val users = quote {
