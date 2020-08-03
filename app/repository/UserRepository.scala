@@ -2,9 +2,12 @@ package repository
 
 import io.getquill._
 import javax.inject.{Inject, Singleton}
-import models.User
+import models.{User, UserRole}
 
 import scala.concurrent.ExecutionContext
+
+
+case class UserJoined(user: User, role: UserRole)
 
 @Singleton
 class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
@@ -13,25 +16,34 @@ class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
 
   import ctx._
 
+  private val usersJoinRole = quote {
+    for {
+      user <- querySchema[User]("users")
+      role <- querySchema[UserRole]("user-role") if (user.roleId == role.id)
+    } yield (user, role)
+  }
+
   private val users = quote {
     querySchema[User]("users")
   }
 
   def getById(id: Long) = {
     val q = quote { id: Long =>
-      users.filter(_.id == id)
+      usersJoinRole.filter(_._1.id == id)
     }
     ctx.run(q(lift(id))).map(user => user.headOption)
+      .map(op => op.map { tup => UserJoined(tup._1, tup._2) })
   }
 
   def getAll() = {
     val q = quote {
-      users
+      usersJoinRole
     }
     ctx.run(q).map(user => user)
+      .map(op => op.map { tup => UserJoined(tup._1, tup._2) })
   }
 
-  def addUser(u : User) = {
+  def addUser(u: User) = {
     val q = quote {
       users.insert(lift(u)).returningGenerated(_.id)
     }
