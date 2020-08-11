@@ -2,12 +2,12 @@ package repository
 
 import io.getquill._
 import javax.inject.{Inject, Singleton}
-import models.{User, UserRole}
+import models.{Address, User, UserRole}
 
 import scala.concurrent.ExecutionContext
 
 
-case class UserJoined(user: User, role: UserRole)
+case class UserJoined(user: User, role: UserRole, address: Address)
 
 @Singleton
 class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
@@ -20,7 +20,8 @@ class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
     for {
       u <- querySchema[User]("users")
       r <- querySchema[UserRole]("user_role").join(u.roleId == _.id)
-    } yield (u, r)
+      a <- querySchema[Address]("address").leftJoin(a => a.userId == u.id)
+    } yield (u, r, a)
   }
 
   private val users = quote {
@@ -32,7 +33,7 @@ class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
       usersJoinRole.filter(_._1.id == id)
     }
     ctx.run(q(lift(id))).map(user => user.headOption)
-      .map(op => op.map { tup => UserJoined(tup._1, tup._2) })
+      .map(op => op.map { tup => UserJoined(tup._1, tup._2, tup._3.orNull) })
   }
 
   def getAll() = {
@@ -40,7 +41,7 @@ class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
       usersJoinRole
     }
     ctx.run(q).map(user => user)
-      .map(op => op.map { tup => UserJoined(tup._1, tup._2) })
+      .map(op => op.map { tup => UserJoined(tup._1, tup._2, tup._3.orNull) })
   }
 
   def addUser(u: User) = {
