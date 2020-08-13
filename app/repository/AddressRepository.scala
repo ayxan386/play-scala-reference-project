@@ -4,7 +4,7 @@ import io.getquill.{PostgresAsyncContext, SnakeCase}
 import javax.inject.{Inject, Singleton}
 import models.Address
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddressRepository @Inject()(implicit ex: ExecutionContext) {
@@ -16,11 +16,11 @@ class AddressRepository @Inject()(implicit ex: ExecutionContext) {
     querySchema[Address]("address")
   }
 
-  def insertAddress(address: Address) = {
+  def insertAddress(address: Address): Future[Address] = {
     ctx.run {
       addresses
         .insert(lift(address))
-        .returning(_.id)
+        .returningGenerated(_.id)
     }
       .map(id => address.copy(id = id))
   }

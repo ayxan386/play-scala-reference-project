@@ -13,5 +13,5 @@ trait UserService {
 
   def getByID(id: Long): Future[Option[UserResponse]]
 
-  def saveUser(u: User): Future[User]
+  def saveUser(u: User): Future[UserResponse]
 }

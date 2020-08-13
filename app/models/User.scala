@@ -1,10 +1,5 @@
 package models
 
-import play.api.libs.json.Json
+import repository.UserDB
 
-case class User(id: Long, name: String, age: Int, hobby: Option[String], roleId: Int, List[Address] addresses)
-
-object User {
-  implicit val writes = Json.writes[User]
-
-}
+case class User(userDB: UserDB, role: UserRole, addresses: List[Address])
