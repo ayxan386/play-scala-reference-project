@@ -1,5 +1,6 @@
 package controllers
 
+import dto.PostDTO
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
@@ -20,8 +21,9 @@ class PostController @Inject()(cc: ControllerComponents, postService: PostServic
 
   def add(): Action[AnyContent] = Action.async {
     implicit request =>
+      val author = request.headers.get("Author")
       Json.fromJson[PostInputJson](request.body.asJson)
-        .map(p => postService.save(PostDTO(p.title, p.body)))
+        .map(p => postService.save(PostDTO(p.title, p.body, None), author))
   }
 
   def getById(id: Long): Action[AnyContent] = ???

@@ -7,10 +7,10 @@ import services.impl.PostServiceImpl
 @ImplementedBy(classOf[PostServiceImpl])
 trait PostService {
 
-  def save(dto: PostDTO) : PostDTO
+  def save(dto: PostDTO, authorName: Option[String]): PostDTO
 
-  def getAll() : List[PostDTO]
+  def getAll(): List[PostDTO]
 
-  def getById(id : Long) : PostDTO
+  def getById(id: Long): PostDTO
 
 }
