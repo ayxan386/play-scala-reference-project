@@ -11,7 +11,7 @@ GET        /api/v1/users/all        controllers.UserController.getAll
 
 POST        /api/v1/users/add       controllers.UserController.addUser
 
-->          /api/v1/posts           routes.PostRoutes
+->          /api/v1/posts           routers.PostRoutes
 
 
 # Map static resources from the /public folder to the /assets URL path

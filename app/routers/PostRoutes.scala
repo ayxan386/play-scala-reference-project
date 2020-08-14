@@ -1,4 +1,4 @@
-package routes
+package routers
 
 import controllers.PostController
 import javax.inject.{Inject, Singleton}

@@ -1,12 +1,38 @@
 package repository
 
+import dto.PostDTO
+import io.getquill._
 import javax.inject.{Inject, Singleton}
 import models.Post
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PostRepository @Inject()(ex: ExecutionContext) {
-  def save(post: Post): Post = ???
+class PostRepository @Inject()(implicit ex: ExecutionContext) {
 
+
+  implicit val ctx: PostgresAsyncContext[SnakeCase] =
+    new PostgresAsyncContext[SnakeCase](SnakeCase, "db.default");
+
+  import ctx._
+
+  private val postsSolo = quote {
+    querySchema[Post]("posts")
+  }
+
+  def save(post: Post): Future[Post] = {
+    val q = quote {
+      postsSolo.insert(lift(post))
+        .returningGenerated(_.id)
+    }
+
+    ctx.run(q).map(id => post.copy(id = id))
+  }
+
+  def getAll(): Future[List[Post]] = {
+    val q = quote {
+      postsSolo
+    }
+    ctx.run(q).map(post => post)
+  }
 }

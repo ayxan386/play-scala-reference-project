@@ -64,13 +64,13 @@ class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
   }
 
   def getByName(name: String): Future[Option[User]] = {
-    val query = { name: String =>
+    val q = quote{ name: String =>
       usersJoinRole
         .filter(_._1.name == name)
     }
     convertResSet(
       ctx
-        .run(query(lift(name)))
+        .run(q(lift(name)))
         .map(resSet => resSet.headOption))
       .map(list => list.headOption)
   }
