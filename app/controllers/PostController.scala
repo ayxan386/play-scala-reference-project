@@ -40,6 +40,12 @@ class PostController @Inject()(
 
   def getById(id: Long): Action[AnyContent] = ???
 
-  def getAll(): Action[AnyContent] = ???
+  def getAll(): Action[AnyContent] = Action.async { implicit request =>
+    postService
+      .getAll()
+      .map(listOfFutures => Future.sequence(listOfFutures))
+      .map(f => f.map(list => Ok(Json.toJson(list))))
+      .flatMap(f => f)
+  }
 
 }
