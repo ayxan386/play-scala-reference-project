@@ -38,7 +38,11 @@ class PostController @Inject()(
     }
   }
 
-  def getById(id: Long): Action[AnyContent] = ???
+  def getById(id: Long): Action[AnyContent] = Action.async { implicit request =>
+    postService
+      .getById(id)
+      .map(post => Ok(Json.toJson(post)))
+  }
 
   def getAll(): Action[AnyContent] = Action.async { implicit request =>
     postService

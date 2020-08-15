@@ -1,6 +1,7 @@
 package services.impl
 
 import dto.{PostDTO, UserResponse}
+import error.notfound.{PostNotFound, UserNotFound}
 import javax.inject.{Inject, Singleton}
 import models.{Post, User}
 import repository.{PostRepository, UserRepository}
@@ -58,6 +59,17 @@ class PostServiceImpl @Inject()(
                           user = Some(userResponse)))))
   }
 
-  override def getById(id: Long): Future[PostDTO] = ???
+  override def getById(id: Long): Future[PostDTO] = {
+    postRepository
+      .getById(id)
+      .map(op => op.getOrElse(throw PostNotFound()))
+      .map(model =>
+        userRepository
+          .getById(model.userId)
+          .map(opU => opU.map(u => UserResponse(u.userDB, u.role, u.addresses)))
+          .map(opU =>
+            PostDTO(title = model.title, body = model.body, user = opU)))
+      .flatMap(f => f)
+  }
 
 }

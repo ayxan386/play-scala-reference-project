@@ -35,4 +35,12 @@ class PostRepository @Inject()(implicit ex: ExecutionContext) {
     }
     ctx.run(q).map(post => post)
   }
+
+  def getById(id: Long): Future[Option[Post]] = {
+    val q = quote { id : Long =>
+      postsSolo.filter(_.id == id)
+    }
+
+    ctx.run(q(lift(id))).map(resSet => resSet.headOption)
+  }
 }
