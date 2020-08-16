@@ -8,7 +8,7 @@ import scala.concurrent.Future
 
 @ImplementedBy(classOf[CommentServiceImpl])
 trait CommentService {
-  def addComment(dto: CommentDTO): Future[CommentDTO]
+  def addComment(dto: CommentDTO, postId: Long, username: String): Future[CommentDTO]
 
   def getAll(): Future[List[CommentDTO]]
 

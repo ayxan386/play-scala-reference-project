@@ -21,4 +21,12 @@ class CommentRepository @Inject()(implicit ex: ExecutionContext) {
         .map(id => comment.copy(id = id))
   }
 
+
+  def getAllByPostId(postId: Long): Future[List[Comment]] = {
+    val q = quote{ postId: Long =>
+      simpleComment.filter(_.postId == postId)
+    }
+    ctx.run(q(lift(postId)))
+  }
+
 }
