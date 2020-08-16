@@ -31,7 +31,7 @@ class PostController @Inject()(
       case Some(jsonBody) =>
         val dto = jsonBody.as[PostInputJson]
         postService
-          .save(PostDTO(title = dto.title, body = dto.body, user = None),
+          .save(PostDTO(title = dto.title, body = dto.body, user = None, Nil),
                 author)
           .map(p => Ok(Json.toJson(p)))
       case None => Future(BadRequest(Json.toJson("Missing request body")))

@@ -2,7 +2,7 @@ package dto
 
 import play.api.libs.json.Json
 
-case class PostDTO(title: String, body: String, user: Option[UserResponse]) {
+case class PostDTO(title: String, body: String, user: Option[UserResponse], comments: List[CommentDTO]) {
 
 }
 

@@ -31,7 +31,7 @@ class PostServiceImpl @Inject()(
       .map(post => postRepository.save(post))
       .flatMap(f => f)
       .map(model =>
-        PostDTO(title = model.title, body = model.body, user = None))
+        PostDTO(title = model.title, body = model.body, user = None, Nil))
       .map(dto =>
         author.map(user =>
           dto.copy(user = Some(mapUserModelToResponse(Some(user))))))
@@ -56,19 +56,26 @@ class PostServiceImpl @Inject()(
                 .map(userResponse =>
                   PostDTO(title = model.title,
                           body = model.body,
-                          user = Some(userResponse)))))
+                          user = Some(userResponse),
+                          comments = Nil))))
   }
 
   override def getById(id: Long): Future[PostDTO] = {
     postRepository
       .getById(id)
       .map(op => op.getOrElse(throw PostNotFound()))
-      .map(model =>
-        userRepository
-          .getById(model.userId)
-          .map(opU => opU.map(u => UserResponse(u.userDB, u.role, u.addresses)))
-          .map(opU =>
-            PostDTO(title = model.title, body = model.body, user = opU)))
+      .map(
+        model =>
+          userRepository
+            .getById(model.userId)
+            .map(opU =>
+              opU.map(u => UserResponse(u.userDB, u.role, u.addresses)))
+            .map(
+              opU =>
+                PostDTO(title = model.title,
+                        body = model.body,
+                        user = opU,
+                        comments = Nil)))
       .flatMap(f => f)
   }
 

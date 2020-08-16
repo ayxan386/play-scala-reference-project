@@ -21,12 +21,12 @@ class CommentController @Inject()(cc: ControllerComponents, commentService: Comm
 
   def addComment() = Action.async {
     implicit request =>
-      val author = request.headers.get("Author")
+      val author = request.headers.get("Author").getOrElse(throw AuthorNotProvided())
       request.body.asJson match {
         case Some(jsonBody) =>
           val parsed = jsonBody.as[CommentInput]
           val dto = CommentDTO(body = parsed.body, None)
-          commentService.addComment(dto)
+          commentService.addComment(dto, parsed.postId, author)
           .map(dto => Ok(Json.toJson(dto)))
       }
   }
