@@ -11,7 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PostRepository @Inject()(implicit ex: ExecutionContext) {
 
 
-  implicit val ctx: PostgresAsyncContext[SnakeCase] =
+  lazy val ctx: PostgresAsyncContext[SnakeCase] =
     new PostgresAsyncContext[SnakeCase](SnakeCase, "db.default");
 
   import ctx._

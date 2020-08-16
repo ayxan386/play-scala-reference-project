@@ -8,7 +8,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddressRepository @Inject()(implicit ex: ExecutionContext) {
-  implicit val ctx = new PostgresAsyncContext[SnakeCase](SnakeCase, "db.default");
+  lazy val ctx = new PostgresAsyncContext[SnakeCase](SnakeCase, "db.default");
 
   import ctx._
 

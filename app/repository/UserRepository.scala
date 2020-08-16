@@ -19,7 +19,7 @@ case class UserDB(id: Long,
 @Singleton
 class UserRepository @Inject()(implicit executionContext: ExecutionContext) {
 
-  implicit val ctx =
+  lazy val ctx =
     new PostgresAsyncContext[SnakeCase](SnakeCase, "db.default");
 
   import ctx._
