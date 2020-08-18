@@ -34,10 +34,16 @@ class CommentServiceImpl @Inject()(
       .map(fromModel)
       .flatMap(f => f)
 
-  override def getAll(): Future[List[CommentDTO]] = ???
+  override def getAll(): Future[List[CommentDTO]] =
+    commentRepository
+      .getAll()
+      .map(list => list.map(fromModel))
+      .map(lf => Future.sequence(lf))
+      .flatMap(f => f)
 
   override def getAllByPostId(postId: Long): Future[List[CommentDTO]] =
-    commentRepository.getAllByPostId(postId)
+    commentRepository
+      .getAllByPostId(postId)
       .map(list => list.map(fromModel))
       .map(lf => Future.sequence(lf))
       .flatMap(f => f)

@@ -8,6 +8,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CommentRepository @Inject()(implicit ex: ExecutionContext) {
+
   lazy val ctx = new PostgresAsyncContext[SnakeCase](SnakeCase, "db.default")
 
   import ctx._
@@ -17,13 +18,17 @@ class CommentRepository @Inject()(implicit ex: ExecutionContext) {
   }
 
   def insertComment(comment: Comment): Future[Comment] = {
-      ctx.run(simpleComment.insert(lift(comment)).returningGenerated(_.id))
-        .map(id => comment.copy(id = id))
+    ctx
+      .run(simpleComment.insert(lift(comment)).returningGenerated(_.id))
+      .map(id => comment.copy(id = id))
   }
 
+  def getAll(): Future[List[Comment]] = {
+    ctx.run(simpleComment).map(l => l)
+  }
 
   def getAllByPostId(postId: Long): Future[List[Comment]] = {
-    val q = quote{ postId: Long =>
+    val q = quote { postId: Long =>
       simpleComment.filter(_.postId == postId)
     }
     ctx.run(q(lift(postId)))
