@@ -1,5 +1,7 @@
 package controllers
 
+import java.io.ByteArrayInputStream
+
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import javax.inject.{Inject, Singleton}
@@ -46,9 +48,12 @@ class ImageController @Inject()(
         .getFileByName(name))
   }
 
-//  def getByName(name: String) = Action { implicit request =>
-//    Ok.sendFile(
-//      imageService
-//        .getFileByName(name))
-//  }
+  def getByNameFromDB(name: String) = Action.async { implicit request =>
+    imageService
+      .getByFilename(name)
+      .map(dm => {
+        println("service was success")
+        Ok(dm.content).as(dm.fileType)
+      })
+  }
 }

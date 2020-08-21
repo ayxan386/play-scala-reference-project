@@ -10,7 +10,6 @@ import play.api.mvc.MultipartFormData.FilePart
 import services.impl.ImageServiceImpl
 
 import scala.concurrent.Future
-import scala.io.Source
 
 @ImplementedBy(classOf[ImageServiceImpl])
 trait ImageService {
