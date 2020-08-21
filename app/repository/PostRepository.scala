@@ -1,6 +1,5 @@
 package repository
 
-import dto.PostDTO
 import io.getquill._
 import javax.inject.{Inject, Singleton}
 import models.Post
