@@ -10,7 +10,8 @@ POST        /api/v1/users/add       controllers.UserController.addUser
 
 ->          /api/v1/comments        routers.CommentRoutes
 
-POST        /api/v1/images			controllers.ImageController.saveImage
+POST        /api/v1/images/db			controllers.ImageController.saveImageDB
+POST        /api/v1/images/direct			controllers.ImageController.saveImageDirect
 
 GET 				/api/v1/images					controllers.ImageController.getByName(name: String)
 

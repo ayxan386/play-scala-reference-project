@@ -21,7 +21,17 @@ class ImageController @Inject()(
     imageService: ImageService)(implicit ex: ExecutionContext)
     extends AbstractController(cc) {
 
-  def saveImage = Action(parse.multipartFormData).async { implicit request =>
+  def saveImageDirect = Action(parse.multipartFormData).async {
+    implicit request =>
+      println("request received")
+      request.body
+        .file("image")
+        .map(f => imageService.saveImageDirect(f))
+        .map(f => f.map(s => Ok(Json.toJson(s))))
+        .get
+  }
+
+  def saveImageDB = Action(parse.multipartFormData).async { implicit request =>
     println("request received")
     request.body
       .file("image")
@@ -30,18 +40,15 @@ class ImageController @Inject()(
       .get
   }
 
-  def getByName(name: String) = Action.async { implicit request =>
-    imageService
-      .getByFilename(name)
-      .map(dm => {
-        val source: Source[ByteString, _] =
-          Source.single(ByteString(dm.content))
-        Result(
-          header = ResponseHeader(200, Map.empty),
-          body = HttpEntity.Streamed(data = source,
-                                     contentType = Some(dm.fileType),
-                                     contentLength = Some(dm.size.toLong))
-        )
-      })
+  def getByName(name: String) = Action { implicit request =>
+    Ok.sendFile(
+      imageService
+        .getFileByName(name))
   }
+
+//  def getByName(name: String) = Action { implicit request =>
+//    Ok.sendFile(
+//      imageService
+//        .getFileByName(name))
+//  }
 }

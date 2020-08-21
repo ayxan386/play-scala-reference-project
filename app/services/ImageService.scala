@@ -16,7 +16,10 @@ import scala.io.Source
 trait ImageService {
 
   def saveImage(f: FilePart[TemporaryFile]): Future[SimpleResponseDTO]
+  def saveImageDirect(f: FilePart[TemporaryFile]): Future[SimpleResponseDTO]
 
   def getByFilename(filename: String): Future[ImageDM]
+
+  def getFileByName(filename: String): File
 
 }
